@@ -1,10 +1,98 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" th:replace="modules/layout :: html(content = ~{::content})">
-  <th:block th:fragment="content">
-    <ul>
-      <li th:each="post : ${posts.items}">
-        <a th:text="${post.spec.title}" th:href="${post.status.permalink}"></a>
+<th:block th:fragment="content">
+  <!-- 首页文章封面区域 -->
+  <header id="hero" th:class="'bg-gray-900 table fade-down relative w-full opacity-95 '+ (${theme.config.home.full_cover == 1} ? 'z-10 h-1/2 sm:h-1/2 md:h-screen full-screen': 'h-1/2')">
+    <!-- 首页头部图片 -->
+    <div th:if="${!#strings.isEmpty(theme.config.home.home_cover)}"
+         class="cover-bg bottom-0 left-0 right-0 top-0 opacity-30 absolute">
+      <img th:src="${theme.config.home.home_cover}"
+           class="h-full w-full left-0 object-cover absolute top-0 dark:filter-60 no-zoom"
+      />
+    </div>
+    <div th:unless="${!#strings.isEmpty(theme.config.home.home_cover)}" class="placeholder-bg"></div>
+    <!-- 首页头部内容 -->
+    <div class="h-96 align-middle table-cell relative w-full index flex justify-center">
+      <h2 class="text-white dark:text-gray-300 mb-5 mt-4 leading-loose relative w-full text-4xl text-center">
+        测试
+      </h2>      <hr class="text-center bg-red-300 h-0.5 border-none w-20 mx-auto -mt-5 mb-3" />
+      <p class="slogan text-center text-white dark:text-gray-300 text-lg md:text-xl text-center" id="slogan">
+        对酒当歌,人生几何
+      </p>
+      <p th:if="${theme.config.home.full_cover == 1}" class="w-full text-4xl absolute bottom-11 text-center">
+        <a
+          th:class="'arrow-down z-50 ' + (${theme.config.home.full_cover == 1} ? 'hidden sm:hidden md:block ': 'hidden')"
+          href="javascript:void(0)">
+          <span class="iconfont icon-toBottom text-white dark:text-gray-300"></span>
+        </a>
+      </p>
+    </div>
+  </header>
+  <!-- 首页文章列表区域 -->
+  <div class="mx-auto fade-up px-5 md:px-0 max-w-xl sm:max-w-2xl md:max-w-3xl lg:max-w-5xl ">
+    <h3 class="mb-4 mt-8 dark:text-gray-300 hidden md:block"><span
+      class="iconfont icon-new text-red-600 mr-2 text-base "></span>最新文章</h3>
+    <ul th:with="posts = ${postFinder.list(1,10)}"
+        class="posts grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-2 xs:grid-cols-1 lg:gap-6 md:gap-4 sm:gap-3 mt-4">
+      <li th:each="post : ${posts.items}" class="list-none">
+        <div class="relative flex flex-col slide-up overflow-hidden rounded-lg w-full bg-base-100 shadow-xl mt-4">
+          <div th:if="${post.spec.pinned}" class="post-top w-24 h-24 overflow-hidden absolute">
+            <div
+              class="shadow-lg text-center transform -rotate-45 relative py-1 px-0 top-3 -left-8 w-28 bg-red-600 text-gray-100">
+              置顶
+            </div>
+          </div>
+          <!-- 卡片头部: 背景图片 -->
+          <figure class="flex items-center justify-center h-56 cursor-pointer">
+            <a th:href="${post.status.permalink}" class="w-full">
+              <img th:if="${post.spec.cover != ''}" class="lazyload object-cover w-full h-56 no-zoom"
+                   th:src="${post.spec.cover}"
+                   data-src="${post.spec.cover}" th:alt="${post.spec.title}" />
+              <span th:unless="${post.spec.cover != ''}" class="full-image placeholder-bg w-full h-56" role="img"
+                    aria-label=""></span>
+            </a>
+          </figure>
+          <!-- 标签\标题\扩展信息 -->
+          <div class="flex flex-col gap-2 px-4 py-6 bg-white dark:bg-gray-800" style="flex: 1 1 auto; ">
+            <div class="text-sm h-5 overflow-hidden">
+              <th:block th:each="tag : ${post.tags}">
+                <a th:href="${tag.status.permalink}" class="relative inline-block badge mr-0.5">
+                  <i class="bg-red-400 opacity-10 absolute top-0 left-0 w-full h-full"
+                     th:style="'background-color:' + ${tag.spec.color == '#ffffff' ? 'rgba(248,113,113,1)' : tag.spec.color}">
+                  </i>
+                  <span class="badge-outline text-red-400 h-5 px-2 py-0.5 rounded-sm cursor-pointer"
+                        th:style="'color: '+ ${tag.spec.color == '#ffffff' ? 'rgba(248,113,113,1)' : tag.spec.color}"
+                        th:text="${tag.spec.displayName}">
+                </span>
+                </a>
+              </th:block>
+            </div>
+            <!-- 标题 -->
+            <h2 class="flex items-center gap-2 text-lg leading-7 mb-2 mt-3">
+              <a th:href="${post.status.permalink}" class="text-gray-800 dark:text-gray-300"
+                 th:text="${post.spec.title}"></a>
+            </h2>
+            <!-- 创建时间\访问量\评论数量\喜欢数量 -->
+            <div class="grad grid-cols-2">
+            <span class="inline-block text-gray-500 ">
+              <label class="text-sm" th:text="${#dates.format(post.spec.publishTime,'yyyy-MM-dd')}" />
+            </span>
+              <div class="inline-block float-right ">
+             <span class="iconfont icon-see2 text-gray-500 text-sm">
+               <label th:text="${post.stats.visit}" />
+             </span>
+                <span class="iconfont icon-uqur text-gray-500 text-sm">
+               <label th:text="${post.stats.comment}" />
+             </span>
+                <span class="iconfont icon-heart-fill text-gray-500 text-sm">
+               <label th:text="${post.stats.upvote}" />
+             </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </li>
     </ul>
-  </th:block>
+  </div>
+</th:block>
 </html>

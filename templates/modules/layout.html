@@ -1,14 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" th:fragment="html (content)">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="${site.title}"></title>
-    <link rel="stylesheet" th:href="@{/assets/dist/style.css}" href="./assets/dist/style.css" />
-    <script th:src="@{/assets/dist/main.iife.js}"></script>
-  </head>
-  <body th:style="'background-color: '+${theme.config.styles.background_color}">
-    <th:block th:replace="${content}" />
-  </body>
+<html lang="zh" class="p-0 m-0 h-full text-base sm:text-sm" th:fragment="html (content)">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title th:text="${site.title}"></title>
+  <link rel="stylesheet" th:href="@{/assets/dist/style.css}" href="./assets/dist/style.css" />
+  <script th:src="@{/assets/dist/main.iife.js}"></script>
+</head>
+<body class="p-0 m-0 h-full" th:style="'background-color: '+${theme.config.styles.background_color}">
+  <div class="flex flex-col h-full">
+    <!--导航栏-->
+    <header style="flex: 0 0 auto;"></header>
+    <!--内容-->
+    <div class="bg-gray-50 dark:bg-gray-900" style="flex: 1 0 auto;">
+      <th:block th:replace="${content}" />
+    </div>
+    <!--底部-->
+    <footer style="flex: 0 0 auto;"></footer>
+  </div>
+</body>
 </html>

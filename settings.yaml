@@ -4,6 +4,22 @@ metadata:
   name: theme-vite-starter-setting
 spec:
   forms:
+    - group: home
+      label: 首页设置
+      formSchema:
+        - $formkit: attachment
+          name: home_cover
+          label: 首页背景图片
+          value: ''
+        - $formKit: radio
+          name: full_cover
+          label: 全屏背景图片
+          value: 0
+          options:
+            - label: 全屏
+              value: 1
+            - label: 非全屏
+              value: 0
     - group: styles
       label: 样式
       formSchema:
